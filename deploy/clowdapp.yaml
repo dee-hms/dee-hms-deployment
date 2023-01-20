@@ -1,0 +1,107 @@
+---
+apiVersion: v1
+kind: Template
+labels:
+  app: provisioning-backend
+  template: provisioning-backend
+metadata:
+  name: provisioning-backend
+  annotations:
+    description: API backend for provisioning in console.redhat.com
+
+objects:
+  - apiVersion: cloud.redhat.com/v1alpha1
+    kind: ClowdApp
+    metadata:
+      name: provisioning-backend
+      labels:
+        app: provisioning-backend
+        service: provisioning
+    spec:
+      envName: ${ENV_NAME}
+      featureFlags: true
+      testing:
+        iqePlugin: provisioning
+      deployments:
+        - name: tang
+          replicas: 2
+          webServices:
+            public:
+              enabled: true
+              apiPath: adv
+          podSpec:
+            image: ${IMAGE}:${IMAGE_TAG}
+      database:
+        name: provisioning
+        version: 13
+      kafkaTopics:
+        - topicName: platform.provisioning.internal.availability-check
+          partitions: 1
+          replicas: 3
+        - topicName: platform.sources.event-stream
+        - topicName: platform.sources.status
+      inMemoryDb: true
+
+# possible application ENV variables are in config/api.env.example
+parameters:
+  - description: ClowdEnv Name
+    name: ENV_NAME
+    value: "Tang"
+  - description: Cpu limit of service
+    name: CPU_LIMIT
+    value: "1"
+  - description: Cpu request increment
+    name: CPU_REQUESTS
+    value: 100m
+  - description: memory limit of service
+    name: MEMORY_LIMIT
+    value: 1Gi
+  - description: memory request increment
+    name: MEMORY_REQUESTS
+    value: 100Mi
+  - description: Image tag
+    name: IMAGE_TAG
+    value: latest
+  - description: Image name
+    name: IMAGE
+    value: registry.redhat.io/rhel9/tang
+  - description: Logging level (trace, debug, info, warn, error, fatal, panic)
+    name: LOGGING_LEVEL
+    value: "debug"
+  - description: Postgres driver logging level (trace, debug, info, warn, error, fatal, panic)
+    name: DATABASE_LOGGING_LEVEL
+    value: "debug"
+  - description: OpenTelemetry collecting
+    name: TELEMETRY_ENABLED
+    value: "true"
+  - description: OpenTelemetry export into the logger
+    name: TELEMETRY_LOGGER_ENABLED
+    value: "true"
+  - description: Enable compression of the API responses
+    name: APP_COMPRESSION
+    value: "true"
+  - description: Determines Clowder deployment
+    name: CLOWDER_ENABLED
+    value: "true"
+  - description: ImageBuilder service URL
+    name: IMAGEBUILDER_URL
+    required: false
+    value: "http://image-builder:8080"
+  - description: Instance prefix adds string to all instance names, leave blank for production
+    name: APP_INSTANCE_PREFIX
+    value: ""
+  - description: Application cache type (none, memory or redis)
+    name: APP_CACHE_TYPE
+    value: "redis"
+  - description: Internal queue type (memory/sqs/postgres).
+    name: WORKER_QUEUE
+    value: "redis"
+  - description: Internal queue concurrency, how many goroutines to run in parallel. Not used in 'redis' mode.
+    name: WORKER_CONCURRENCY
+    value: "100"
+  - description: Internal queue heartbeat interval. How often to update job liveness information. Not used in 'redis' mode.
+    name: WORKER_HEARTBEAT
+    value: "30s"
+  - description: Internal queue beat threshold. Now many times the beat can be updated until job is cancelled. Not used in 'redis' mode.
+    name: WORKER_MAX_BEATS
+    value: "10"
