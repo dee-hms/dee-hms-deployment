@@ -32,6 +32,8 @@ objects:
             targetPort: 8000
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
+            command:
+              - /usr/bin/tangd-entrypoint
             env:
               - name: PORT
                 value: ${ADV_INTERNAL_PORT}
