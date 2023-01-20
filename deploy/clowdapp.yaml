@@ -2,45 +2,50 @@
 apiVersion: v1
 kind: Template
 labels:
-  app: provisioning-backend
-  template: provisioning-backend
+  app: tang
+  template: tang
 metadata:
-  name: provisioning-backend
+  name: tang
   annotations:
-    description: API backend for provisioning in console.redhat.com
+    description: API backend for tang server deployment in console.redhat.com
 
 objects:
   - apiVersion: cloud.redhat.com/v1alpha1
     kind: ClowdApp
     metadata:
-      name: provisioning-backend
+      name: tang-backend
       labels:
-        app: provisioning-backend
-        service: provisioning
+        app: tang-backend
+        service: tang
     spec:
       envName: ${ENV_NAME}
       featureFlags: true
       testing:
-        iqePlugin: provisioning
+        iqePlugin: tang
       deployments:
         - name: tang
-          replicas: 2
+          replicas: 1
           webServices:
             public:
               enabled: true
               apiPath: adv
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
+            livenessProbe:
+              exec:
+                /usr/bin/tangd-healthcheck
+              initialDelaySeconds: 5
+              periodSeconds: 5
+              timeoutSeconds: 15
+            readinessProbe:
+              exec:
+                /usr/bin/tangd-healthcheck
+              initialDelaySeconds: 27
+              periodSeconds: 10
+              timeoutSeconds: 5
       database:
-        name: provisioning
+        name: tang
         version: 13
-      kafkaTopics:
-        - topicName: platform.provisioning.internal.availability-check
-          partitions: 1
-          replicas: 3
-        - topicName: platform.sources.event-stream
-        - topicName: platform.sources.status
-      inMemoryDb: true
 
 # possible application ENV variables are in config/api.env.example
 parameters:
@@ -64,7 +69,7 @@ parameters:
     value: latest
   - description: Image name
     name: IMAGE
-    value: registry.redhat.io/rhel9/tang
+    value: quay.io/sec-eng-special/tang
   - description: Logging level (trace, debug, info, warn, error, fatal, panic)
     name: LOGGING_LEVEL
     value: "debug"
