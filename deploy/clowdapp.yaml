@@ -36,9 +36,6 @@ objects:
             env:
               - name: PORT
                 value: ${ADV_INTERNAL_PORT}
-            securityContext:
-              allowPrivilegeEscalation: false
-              runAsUser: 0
             livenessProbe:
               exec:
                 command:
@@ -82,7 +79,7 @@ parameters:
     value: quay.io/sec-eng-special/tang
   - description: Advertising internal port
     name: ADV_INTERNAL_PORT
-    value: "7777"
+    value: "8000"
   - description: Logging level (trace, debug, info, warn, error, fatal, panic)
     name: LOGGING_LEVEL
     value: "debug"
