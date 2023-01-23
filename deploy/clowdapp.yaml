@@ -29,7 +29,6 @@ objects:
             public:
               enabled: true
               apiPath: adv
-            targetPort: 8000
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
             command:
@@ -37,6 +36,9 @@ objects:
             env:
               - name: PORT
                 value: ${ADV_INTERNAL_PORT}
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsUser: 0
             livenessProbe:
               exec:
                 command:
@@ -80,7 +82,7 @@ parameters:
     value: quay.io/sec-eng-special/tang
   - description: Advertising internal port
     name: ADV_INTERNAL_PORT
-    value: "8000"
+    value: "7777"
   - description: Logging level (trace, debug, info, warn, error, fatal, panic)
     name: LOGGING_LEVEL
     value: "debug"
