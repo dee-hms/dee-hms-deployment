@@ -66,27 +66,10 @@ do
 done
 
 
-test -z "${PODNAME}" && PODNAME=$(guessPodName)
-test -z "${SERVICENAME}" && SERVICENAME=$(guessServiceName)
-
 APISERVER=$(oc config view --minify -o jsonpath='{.clusters[*].cluster.server}')
 
 # dumpInfo
 installDeps
 
-### Test API
-### auth_curl "${APISERVER}/openapi/v2"
-
-### Extract logs from pod
-### auth_curl "${APISERVER}/api/v1/namespaces/${NAMESPACE}/pods/${PODNAME}/log"
-
-### Extract status of pod
-#auth_curl "${APISERVER}/api/v1/namespaces/${NAMESPACE}/pods/${PODNAME}/status"
-
-### Command execution
-#auth_curl "${APISERVER}/api/v1/namespaces/${NAMESPACE}/pods/${PODNAME}/exec?command=/bin/bash&command=-c&command=${POD_COMMAND}&stdin=true&stderr=true&stdout=true&tty=true"
-
 ### Extract status of service
-#auth_curl "${APISERVER}/api/v1/namespaces/${NAMESPACE}/services/${SERVICENAME}/status"
-#auth_curl "${APISERVER}/api/v1/namespaces/${NAMESPACE}/services/${SERVICENAME}"
 auth_curl "${APISERVER}/api/v1/namespaces/${NAMESPACE}/endpoints/${ENDPOINT}"
