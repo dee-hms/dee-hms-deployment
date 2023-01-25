@@ -67,3 +67,6 @@ installDeps
 
 ### Extract status of service
 auth_curl "${APISERVER}/api/v1/namespaces/${NAMESPACE}/endpoints/${ENDPOINT}"
+
+### Extract status of deployment (replica parse, for example)
+auth_curl "${APISERVER}/apis/apps/v1/namespaces/${NAMESPACE}/deployments/${ENDPOINT}"
