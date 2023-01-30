@@ -70,3 +70,7 @@ auth_curl "${APISERVER}/api/v1/namespaces/${NAMESPACE}/endpoints/${ENDPOINT}"
 
 ### Extract status of deployment (replica parse, for example)
 auth_curl "${APISERVER}/apis/apps/v1/namespaces/${NAMESPACE}/deployments/${ENDPOINT}"
+
+### Extract route like ENDPOINT and dump it
+route=$(auth_curl "${APISERVER}/apis/route.openshift.io/v1/namespaces/${NAMESPACE}/routes" | grep "${ENDPOINT}-" | awk -F ":" {'print $2'} | tr -d '"' | tr -d ',' | tr -d ' ')
+auth_curl "${APISERVER}/apis/route.openshift.io/v1/namespaces/${NAMESPACE}/routes/${route}"
