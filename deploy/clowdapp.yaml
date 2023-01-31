@@ -28,7 +28,7 @@ objects:
           webServices:
             public:
               enabled: true
-              apiPath: adv
+              apiPath: dee-hms
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
             command:
