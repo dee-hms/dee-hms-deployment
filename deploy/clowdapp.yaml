@@ -50,6 +50,12 @@ objects:
               initialDelaySeconds: 27
               periodSeconds: 10
               timeoutSeconds: 5
+            volumes:
+              - emptyDir: {}
+                name: tang-directory
+            volumeMounts:
+              - mountPath: /var/db/tang
+                name: tang-directory
       database:
         name: tang
         version: 13
