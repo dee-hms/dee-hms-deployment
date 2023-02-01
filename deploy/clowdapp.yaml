@@ -19,9 +19,7 @@ objects:
         service: tang
     spec:
       envName: ${ENV_NAME}
-      featureFlags: true
-      testing:
-        iqePlugin: tang
+      featureFlags: false
       deployments:
         - name: tang
           replicas: 1
@@ -51,14 +49,23 @@ objects:
               periodSeconds: 10
               timeoutSeconds: 5
             volumes:
-              - emptyDir: {}
-                name: tang-directory
+              - persistentVolumeClaim:
+                  claimName: tangserver-pvc
+                name: tangserver-pvc
             volumeMounts:
               - mountPath: /var/db/tang
-                name: tang-directory
-      database:
-        name: tang
-        version: 13
+                name: tangserver-pvc
+
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: tangserver-pvc
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
 
 # possible application ENV variables are in config/api.env.example
 parameters:
