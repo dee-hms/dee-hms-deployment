@@ -74,3 +74,4 @@ auth_curl "${APISERVER}/apis/apps/v1/namespaces/${NAMESPACE}/deployments/${ENDPO
 ### Extract route like ENDPOINT and dump it
 route=$(auth_curl "${APISERVER}/apis/route.openshift.io/v1/namespaces/${NAMESPACE}/routes" | grep "${ENDPOINT}-" | awk -F ":" {'print $2'} | tr -d '"' | tr -d ',' | tr -d ' ')
 auth_curl "${APISERVER}/apis/route.openshift.io/v1/namespaces/${NAMESPACE}/routes/${route}"
+auth_curl "${APISERVER}/apis/route.openshift.io/v1/namespaces/${NAMESPACE}/routes"
