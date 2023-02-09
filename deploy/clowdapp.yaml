@@ -28,7 +28,7 @@ objects:
               enabled: true
               apiPath: dee-hms
           podSpec:
-            image: ${IMAGE}:${IMAGE_TAG}
+            image: ${IMG}:${IMG_TAG}
             command:
               - /usr/bin/tangd-entrypoint
             env:
@@ -73,10 +73,10 @@ parameters:
     name: ENV_NAME
     value: "Tang"
   - description: Image tag
-    name: IMAGE_TAG
-    value: latest
+    name: IMG_TAG
+    value: "dee-hms"
   - description: Image name
-    name: IMAGE
+    name: IMG
     value: quay.io/sec-eng-special/tang
   - description: Advertising internal port
     name: ADV_INTERNAL_PORT
