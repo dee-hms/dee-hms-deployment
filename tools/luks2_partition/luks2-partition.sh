@@ -16,12 +16,19 @@
 #
 function usage() {
   echo
-  echo "$0 -d device [-h] [-v]"
+  echo "$0 -d device [-m mount_directory] [-p password] [-h] [-v] [-y]"
   echo
-  echo "Example:"
+  echo "Examples:"
   echo "        $0 -d /dev/xvdb"
-  echo "        $0 -d /dev/xvdb -v"
-  echo "        $0 -h"
+  echo "        $0 -d /dev/xvdb -p passWordToUse_ -m /mnt/encdata -y"
+  echo
+  echo "Options:"
+  echo "        -d \"device\": device to format (mandatory)"
+  echo "        -m \"mount_point\": (/mnt/encrypted by default)"
+  echo "        -p \"password\": (LUKS2 master password, if not provided, it will be asked)"
+  echo "        -h: help"
+  echo "        -v: verbose"
+  echo "        -y: automatically answer yes for all questions (requires -p)"
   echo
   exit "$2"
 }
@@ -34,7 +41,7 @@ MOUNT_DIRECTORY="/mnt/encrypted"
 
 # Check executed as root
 
-while getopts "d:p:m:hv" arg
+while getopts "d:p:m:hvy" arg
 do
   case "${arg}" in
     d) DEVICE=${OPTARG}
@@ -45,6 +52,9 @@ do
        ;;
     h) usage $0 0
        ;;
+    y) YES="1"
+       INPUT_OPT="y"
+       ;;
     v) set -x
        ;;
   esac
@@ -52,6 +62,13 @@ done
 
 if [ -z "${DEVICE}" ];
 then
+    usage $0 1
+fi
+
+if [ "${YES}" == "1" ] && [ -z "${LUKS_PASSWORD}" ];
+then
+    echo
+    echo "Need to provide LUKS2 password to use -y mode!!!"
     usage $0 1
 fi
 
