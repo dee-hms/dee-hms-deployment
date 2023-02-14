@@ -65,6 +65,15 @@ then
     usage $0 1
 fi
 
+ID=$(id -u)
+if [ "${ID}" != "0" ];
+then
+    echo
+    echo "This has to be executed as root user"
+    echo
+    exit 1
+fi
+
 if [ "${YES}" == "1" ] && [ -z "${LUKS_PASSWORD}" ];
 then
     echo
