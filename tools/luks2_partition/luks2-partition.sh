@@ -50,19 +50,21 @@ do
        ;;
     m) MOUNT_DIRECTORY=${OPTARG}
        ;;
-    h) usage $0 0
+    h) usage "$0" 0
        ;;
     y) YES="1"
        INPUT_OPT="y"
        ;;
     v) set -x
        ;;
+    *) usage "$0" 1
+       ;;
   esac
 done
 
 if [ -z "${DEVICE}" ];
 then
-    usage $0 1
+    usage "$0" 1
 fi
 
 ID=$(id -u)
@@ -78,13 +80,13 @@ if [ "${YES}" == "1" ] && [ -z "${LUKS_PASSWORD}" ];
 then
     echo
     echo "Need to provide LUKS2 password to use -y mode!!!"
-    usage $0 1
+    usage "$0" 1
 fi
 
 if [ -z "${YES}" ];
 then
     echo "WARNING: ALL DATA IN ${DEVICE} WILL BE LOST."
-    read -p "Are you sure you want to format device:[${DEVICE}] with LUKS2 format? (y/N):" INPUT_OPT
+    read -r -p "Are you sure you want to format device:[${DEVICE}] with LUKS2 format? (y/N):" INPUT_OPT
 fi
 
 if [ "${INPUT_OPT}" != "y" ];
@@ -96,13 +98,13 @@ fi
 # Partition as luks
 if [ -n "${LUKS_PASSWORD}" ];
 then
-    echo -n "${LUKS_PASSWORD}" | cryptsetup luksFormat --batch-mode --key-file - ${DEVICE}
+    echo -n "${LUKS_PASSWORD}" | cryptsetup luksFormat --batch-mode --key-file - "${DEVICE}"
 else
-    cryptsetup luksFormat --batch-mode ${DEVICE}
+    cryptsetup luksFormat --batch-mode "${DEVICE}"
 fi
 
 # Open
-echo "Opening device ${device} to format in EXT4 mode ..."
+echo "Opening device ${DEVICE} to format in EXT4 mode ..."
 if [ -n "${LUKS_PASSWORD}" ];
 then
     echo -n "${LUKS_PASSWORD}" | cryptsetup luksOpen "${DEVICE}" encrypted
@@ -114,8 +116,8 @@ fi
 mkfs.ext4 /dev/mapper/encrypted
 
 # Get UID (OF THE DEVICE !!!)
-TRIMMED_DEVICE=$(echo ${DEVICE} | sed s-/dev/--g)
-UUID=$(lsblk --fs | grep ${TRIMMED_DEVICE} | awk '{print $4}')
+TRIMMED_DEVICE="${DEVICE//\/dev\//}"
+UUID=$(lsblk --fs | grep "${TRIMMED_DEVICE}" | awk '{print $4}')
 
 if [ -z "${UUID}" ];
 then
@@ -124,13 +126,13 @@ then
 fi
 
 # Set crypttab as expected, with none, nofail
-grep "luks-${UUID} UUID=${UUID} none nofail" /etc/crypttab 2>&1 > /dev/null || {
+grep "luks-${UUID} UUID=${UUID} none nofail" /etc/crypttab 2>/dev/null 1>/dev/null || {
     echo "luks-${UUID} UUID=${UUID} none nofail" >> /etc/crypttab
 }
 
 # Set fstab as expected, with next options:
 grep "/dev/mapper/luks-${UUID} ${MOUNT_DIRECTORY} ext4  auto,nofail,noatime,rw,user 0 0"\
-     /etc/fstab 2>&1 > /dev/null || {
+     /etc/fstab 2>/dev/null 1>/dev/null || {
     echo "/dev/mapper/luks-${UUID} ${MOUNT_DIRECTORY} ext4  auto,nofail,noatime,rw,user 0 0" \
          >> /etc/fstab
 }
