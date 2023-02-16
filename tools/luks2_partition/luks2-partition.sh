@@ -38,8 +38,14 @@ DEVICE=""
 INPUT_OPT=""
 LUKS_PASSWORD=""
 MOUNT_DIRECTORY="/mnt/encrypted"
+DEPENDENCIES=(cryptsetup)
 
 # Check executed as root
+
+install_dependency() {
+    echo "Installing dependency[${2}]: ${1}"
+    dnf install -y "${1}"
+}
 
 while getopts "d:p:m:hvy" arg
 do
@@ -85,8 +91,28 @@ fi
 
 if [ -z "${YES}" ];
 then
+    printf -v deps ' %s' "${DEPENDENCIES[@]}"
+    printf 'Install required dependencies:(%s)? ' "${deps:1}"
+    read -r -p "[y/N]:" INPUT_OPT
+    if [ "${INPUT_OPT}" != "y" ];
+    then
+        echo "Exiting ..."
+        exit 0
+    fi
+fi
+
+for ((dep=0; dep<${#DEPENDENCIES[*]}; dep++))
+do
+    rpm -qi "${DEPENDENCIES[$dep]}" 1>/dev/null 2>/dev/null && \
+        echo "${DEPENDENCIES[$dep]} already installed." || \
+        install_dependency "${DEPENDENCIES[$dep]}" "${dep}"
+done
+
+
+if [ -z "${YES}" ];
+then
     echo "WARNING: ALL DATA IN ${DEVICE} WILL BE LOST."
-    read -r -p "Are you sure you want to format device:[${DEVICE}] with LUKS2 format? (y/N):" INPUT_OPT
+    read -r -p "Are you sure you want to format device:[${DEVICE}] with LUKS2 format? [y/N]:" INPUT_OPT
 fi
 
 if [ "${INPUT_OPT}" != "y" ];
