@@ -111,8 +111,10 @@ done
 
 if [ -z "${YES}" ];
 then
+    echo "=================================================================================="
     echo "WARNING: ALL DATA IN ${DEVICE} WILL BE LOST."
     read -r -p "Are you sure you want to format device:[${DEVICE}] with LUKS2 format? [y/N]:" INPUT_OPT
+    echo "=================================================================================="
 fi
 
 if [ "${INPUT_OPT}" != "y" ];
