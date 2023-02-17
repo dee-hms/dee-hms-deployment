@@ -141,7 +141,7 @@ else
 fi
 
 # Partition
-mkfs.ext4 /dev/mapper/encrypted
+mkfs.xfs /dev/mapper/encrypted
 
 # Get UID (OF THE DEVICE !!!)
 TRIMMED_DEVICE="${DEVICE//\/dev\//}"
@@ -159,8 +159,8 @@ grep "luks-${UUID} UUID=${UUID} none nofail" /etc/crypttab 2>/dev/null 1>/dev/nu
 }
 
 # Set fstab as expected, with next options:
-grep "/dev/mapper/luks-${UUID} ${MOUNT_DIRECTORY} ext4  auto,nofail,noatime,rw,user 0 0"\
+grep "/dev/mapper/luks-${UUID} ${MOUNT_DIRECTORY} xfs  auto,nofail,noatime,rw,user 0 0"\
      /etc/fstab 2>/dev/null 1>/dev/null || {
-    echo "/dev/mapper/luks-${UUID} ${MOUNT_DIRECTORY} ext4  auto,nofail,noatime,rw,user 0 0" \
+    echo "/dev/mapper/luks-${UUID} ${MOUNT_DIRECTORY} xfs  auto,nofail,noatime,rw,user 0 0" \
          >> /etc/fstab
 }
