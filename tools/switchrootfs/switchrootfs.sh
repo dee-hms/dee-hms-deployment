@@ -62,7 +62,7 @@ echo
 echo w
 ) | fdisk "${TO_DEVICE}"
 # PART can be 1 or p1
-devpart=$(sudo fdisk -l "${TO_DEVICE}" | grep "${TO_DEVICE}1" | awk '{print $1}')
+devpart=$(sudo fdisk -l "${TO_DEVICE}" | egrep -E "${TO_DEVICE}[p]{0,1}1" | awk '{print $1}')
 sudo mkfs.xfs -f "${devpart}"
 
 ###### Mount everything and rsync
