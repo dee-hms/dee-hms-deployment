@@ -158,6 +158,8 @@ grep "luks-${UUID} UUID=${UUID} none nofail" /etc/crypttab 2>/dev/null 1>/dev/nu
     echo "luks-${UUID} UUID=${UUID} none nofail" >> /etc/crypttab
 }
 
+test -d "${MOUNT_DIRECTORY}" || mkdir -p "${MOUNT_DIRECTORY}"
+
 # Set fstab as expected, with next options:
 grep "/dev/mapper/luks-${UUID} ${MOUNT_DIRECTORY} xfs  auto,nofail,noatime,rw,user 0 0"\
      /etc/fstab 2>/dev/null 1>/dev/null || {
