@@ -1,4 +1,6 @@
 # dee-hms-deployment
+
+## Introduction
 Repository to collect Disk Encryption Experience (DEE) Host Management Service (HMS) backend deployment. The current status of this code is beta, as this is intended to show a Proof of Concept about how NBDE works in ConsoleDOT environment
 
 ## Deployment
