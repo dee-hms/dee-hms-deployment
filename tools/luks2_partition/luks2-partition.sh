@@ -103,9 +103,11 @@ fi
 
 for ((dep=0; dep<${#DEPENDENCIES[*]}; dep++))
 do
-    rpm -qi "${DEPENDENCIES[$dep]}" 1>/dev/null 2>/dev/null && \
-        echo "${DEPENDENCIES[$dep]} already installed." || \
+    if rpm -qi "${DEPENDENCIES[$dep]}" 1>/dev/null 2>/dev/null; then
+        echo "${DEPENDENCIES[$dep]} already installed."
+    else
         install_dependency "${DEPENDENCIES[$dep]}" "${dep}"
+    fi
 done
 
 
