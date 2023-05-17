@@ -39,12 +39,15 @@ INPUT_OPT=""
 LUKS_PASSWORD=""
 MOUNT_DIRECTORY="/mnt/encrypted"
 DEPENDENCIES=(cryptsetup)
-
-# Check executed as root
+PKG_MGR="dnf"
 
 install_dependency() {
     echo "Installing dependency[${2}]: ${1}"
-    dnf install -y "${1}"
+    ${PKG_MGR} install -y "${1}"
+}
+
+detect_package_manager() {
+    test apt && PKG_MGR="apt"
 }
 
 while getopts "d:p:m:hvy" arg
@@ -73,11 +76,12 @@ then
     usage "$0" 1
 fi
 
+# Check executed as root
 ID=$(id -u)
 if [ "${ID}" != "0" ];
 then
     echo
-    echo "This has to be executed as root user"
+    echo "This has to be executed as root user or via sudo"
     echo
     exit 1
 fi
@@ -88,6 +92,8 @@ then
     echo "Need to provide LUKS2 password to use -y mode!!!"
     usage "$0" 1
 fi
+
+detect_package_manager
 
 if [ -z "${YES}" ];
 then
@@ -134,7 +140,7 @@ else
 fi
 
 # Open
-echo "Opening device ${DEVICE} to format in EXT4 mode ..."
+echo "Opening device ${DEVICE} to format in XFS mode ..."
 if [ -n "${LUKS_PASSWORD}" ];
 then
     echo -n "${LUKS_PASSWORD}" | cryptsetup luksOpen "${DEVICE}" encrypted
