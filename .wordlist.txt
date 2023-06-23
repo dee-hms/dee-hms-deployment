@@ -13,4 +13,6 @@ HMS
 llvm
 Markdown
 NBDE
+shellcheck
+spellcheck
 yaml
