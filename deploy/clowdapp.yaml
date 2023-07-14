@@ -53,7 +53,7 @@ objects:
                   claimName: tangserver-pvc
                 name: tangserver-pvc
             volumeMounts:
-              - mountPath: /var/db/tang
+              - mountPath: /var/db
                 name: tangserver-pvc
 
   - apiVersion: v1
@@ -74,7 +74,7 @@ parameters:
     value: "Tang"
   - description: Image tag
     name: IMG_TAG
-    value: "dee-hms"
+    value: "dee-hms-socat"
   - description: Image name
     name: IMG
     value: quay.io/sec-eng-special/tang
