@@ -1,4 +1,11 @@
 # dee-hms-deployment
+
+## License
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Status
+
 [![shellcheck](https://github.com/dee-hms/dee-hms-deployment/actions/workflows/shellcheck.yaml/badge.svg)](https://github.com/dee-hms/dee-hms-deployment/actions/workflows/shellcheck.yaml)\
 [![spellcheck](https://github.com/dee-hms/dee-hms-deployment/actions/workflows/spellcheck.yaml/badge.svg)](https://github.com/dee-hms/dee-hms-deployment/actions/workflows/spellcheck.yaml)
 
