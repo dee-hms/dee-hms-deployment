@@ -114,7 +114,7 @@ insertEntries() {
 #!/bin/bash
 echo "${workspace},/var/db/${workspace}" >> /etc/socat-tang-filter.csv
 EOF
-    done< "${config_file}"
+    done< "${config_file}" 2>/dev/null 1>/dev/null
 }
 
 while getopts "c:d:k:p:t:hv" arg
