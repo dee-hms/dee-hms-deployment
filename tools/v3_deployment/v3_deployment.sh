@@ -18,12 +18,12 @@ PKG_MGR="dnf"
 
 usage() {
     echo
-    echo "$1 -c <configFile> -d <dbHost:dbUser:dbPassword> -t <tang_podname> [-h] [-v]"
+    echo "$1 -c <configFile> -d <dbHost:dbUser:dbPassword> [-t tang_podname (will be guessed if not provided)] [-k k8s_client (oc by default)] [-h] [-v] "
     echo
     exit "$2"
 }
 
-usage_message() {
+usageMessage() {
     echo
     echo "$2"
     usage "$1" "$3"
@@ -34,13 +34,19 @@ installDependency() {
     ${PKG_MGR} install -y "${1}" 2>/dev/null 1>/dev/null
 }
 
+guessPodName() {
+    tang_podname=$("${k8s_client}" get pods | grep tang-backend | awk '{print $1}')
+    export tang_podname
+}
+
 checkParams() {
-    test -z "${dbhost}"       && usage_message "$0" "Please, provide database host" 1
-    test -z "${dbuser}"       && usage_message "$0" "Please, provide database user" 2
-    test -z "${dbpassword}"   && usage_message "$0" "Please, provide database password" 3
-    test -z "${tang_podname}" && usage_message "$0" "Please, provide tang pod name" 4
-    test -z "${config_file}"  && usage_message "$0" "Please, provide configuration file" 5
-    test -f "${config_file}"  || usage_message "$0" "Please, provide existing configuration file" 6
+    test -z "${dbhost}"       && usageMessage "$0" "Please, provide database host" 1
+    test -z "${dbuser}"       && usageMessage "$0" "Please, provide database user" 2
+    test -z "${dbpassword}"   && usageMessage "$0" "Please, provide database password" 3
+    test -z "${config_file}"  && usageMessage "$0" "Please, provide configuration file" 5
+    test -f "${config_file}"  || usageMessage "$0" "Please, provide existing configuration file" 6
+    test -z "${k8s_client}"   && export k8s_client="oc"
+    test -z "${tang_podname}" && guessPodName
 }
 
 detectPackageManager() {
@@ -104,20 +110,14 @@ insertEntries() {
         spiffe_id=$(echo "${line}" | awk -F ',' '{print $2}')
         echo "Inserting entry:workspace:[${workspace}];spire_id:[${spiffe_id}]"
         databaseCommandTangBindings "insert into bindings (tang_workspace, spiffe_id) values ('${workspace}', '${spiffe_id}');"
+        "${k8s_client}" exec -i "${tang_podname}" -- /bin/bash -s <<EOF
+#!/bin/bash
+echo "${workspace},/var/db/${workspace}" >> /etc/socat-tang-filter.csv
+EOF
     done< "${config_file}"
 }
 
-# Check executed as root
-ID=$(id -u)
-if [ "${ID}" != "0" ];
-then
-    echo
-    echo "This script has to be executed as root user or via sudo"
-    echo
-    exit 1
-fi
-
-while getopts "c:d:u:p:t:hv" arg
+while getopts "c:d:k:p:t:hv" arg
 do
     case "${arg}" in
         c) export config_file=${OPTARG}
@@ -126,9 +126,9 @@ do
            ;;
         h) usage "$0" 0
            ;;
-        t) export tang_podname=${OPTARG}
+        k) export k8s_client=${OPTARG}
            ;;
-        u) export httpuser_password=${OPTARG}
+        t) export tang_podname=${OPTARG}
            ;;
         v) export verbose=1
            ;;
@@ -138,8 +138,8 @@ do
 done
 
 parseDbUserPassword
-dumpInfo
 checkParams
+dumpInfo
 detectPackageManager
 installDependencies
 createDatabase
