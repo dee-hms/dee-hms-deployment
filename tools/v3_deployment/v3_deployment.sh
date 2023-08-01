@@ -30,7 +30,7 @@ usage_message() {
 }
 
 installDependency() {
-    echo "Installing dependency[${2}]: ${1}"
+    dumpVerbose "Installing dependency[${2}]: ${1}"
     ${PKG_MGR} install -y "${1}" 2>/dev/null 1>/dev/null
 }
 
@@ -47,16 +47,22 @@ detectPackageManager() {
     which apt 2>/dev/null 1>/dev/null && PKG_MGR="apt"
 }
 
+dumpVerbose() {
+    if [ -n "${verbose}" ]; then
+        echo "${1}"
+    fi
+}
+
 dumpInfo() {
     if [ -n "${verbose}" ]; then
-        echo "---------------------------------------"
+        echo "---------------------------------------------------------"
         echo "configuration_file:[${config_file}]"
         echo "dbhost_user_password:[${dbhost_user_password}]"
         echo "dbhost:${dbhost}"
         echo "dbuser:${dbuser}"
         echo "dbpassword:${dbpassword}"
         echo "tang_podname:${tang_podname}"
-        echo "---------------------------------------"
+        echo "---------------------------------------------------------"
     fi
 }
 
@@ -74,6 +80,31 @@ parseDbUserPassword() {
     export dbuser
     dbpassword=$(echo "${dbhost_user_password}" | awk -F ':' '{print $3}')
     export dbpasword
+}
+
+databaseCommand() {
+    echo "$1" | mysql --host="${dbhost}" --user="${dbuser}" --password="${dbpassword}"
+}
+
+databaseCommandTangBindings() {
+    databaseCommand "USE tang_bindings; $1"
+}
+
+createDatabase() {
+    databaseCommand "CREATE DATABASE tang_bindings;" 2>/dev/null 1>/dev/null
+    databaseCommand "USE tang_bindings; create table bindings (spiffe_id VARCHAR(255) NOT NULL, tang_workspace VARCHAR(255) NOT NULL);" 2>/dev/null 1>/dev/null
+}
+
+insertEntries() {
+    local workspace
+    local spiffe_id
+    while read -r line;
+    do
+        workspace=$(echo "${line}" | awk -F ',' '{print $1}')
+        spiffe_id=$(echo "${line}" | awk -F ',' '{print $2}')
+        echo "Inserting entry:workspace:[${workspace}];spire_id:[${spiffe_id}]"
+        databaseCommandTangBindings "insert into bindings (tang_workspace, spiffe_id) values ('${workspace}', '${spiffe_id}');"
+    done< "${config_file}"
 }
 
 # Check executed as root
@@ -111,3 +142,5 @@ dumpInfo
 checkParams
 detectPackageManager
 installDependencies
+createDatabase
+insertEntries
