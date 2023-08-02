@@ -3,6 +3,8 @@ bonfire
 CLI
 config
 ConsoleDOT
+CSV
+csv
 dee
 DEE
 dee-hms-deployment
@@ -11,8 +13,16 @@ grcov
 hms
 HMS
 llvm
+localhost
 Markdown
 NBDE
+nbde
+OpenShift
+PoC
+RedHat
+redhat
 shellcheck
+socat
 spellcheck
+YAML
 yaml
