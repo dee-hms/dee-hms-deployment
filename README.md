@@ -10,7 +10,8 @@
 [![spellcheck](https://github.com/dee-hms/dee-hms-deployment/actions/workflows/spellcheck.yaml/badge.svg)](https://github.com/dee-hms/dee-hms-deployment/actions/workflows/spellcheck.yaml)
 
 ## Introduction
-Repository to collect Disk Encryption Experience (DEE) Host Management Service (HMS) backend deployment. The current status of this code is beta, as this is intended to show a Proof of Concept about how NBDE works in ConsoleDOT environment.
+Repository to collect Disk Encryption Experience (DEE) Host Management Service (HMS) backend deployment.
+The current status of the code is beta, as this is intended to show a Proof of Concept about how NBDE works in ConsoleDOT environment.
 
 ## Deployment
 Content of this repository can be deployed through [bonfire](https://github.com/RedHatInsights/bonfire) and Ephemeral Environments.
