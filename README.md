@@ -38,8 +38,8 @@ bonfire deploy --source=local tang
 ## Tools
 Apart from deployment configuration files, this repository holds some useful tools that allow automating some of the tasks required for the PoC
 
-### v3_deployment
-[v3_deployment](https://github.com/dee-hms/dee-hms-deployment/blob/main/tools/v3_deployment/v3_deployment.sh) tool allows deploying some of the
+### v3_deployment_config
+[v3_deployment_config](https://github.com/dee-hms/dee-hms-deployment/blob/main/tools/v3_deployment/v3_deployment_config.sh) tool allows deploying some of the
 required information to tang-proxy / socat-tang-filter tools. It parses a CSV file, and configures:
 
 * tang proxy database
@@ -48,9 +48,9 @@ required information to tang-proxy / socat-tang-filter tools. It parses a CSV fi
 Usage of the tool is as follows:
 
 ```bash
-$ ./tools/v3_deployment/v3_deployment.sh -h
+$ ./tools/v3_deployment/v3_deployment_config.sh -h
 
-./tools/v3_deployment/v3_deployment.sh -c <configFile> -d <dbHost:dbUser:dbPassword> [-t tangPodname (will be guessed if not provided)] [-k k8sClient (oc by default)] [-h] [-v]
+./tools/v3_deployment/v3_deployment_config.sh -c <configFile> -d <dbHost:dbUser:dbPassword> [-t tangPodname (will be guessed if not provided)] [-k k8sClient (oc by default)] [-h] [-v]
 ```
 Mandatory parameters are:\
 -c `configFile`: CSV configuration file. An example is shown [here](https://github.com/dee-hms/dee-hms-deployment/blob/main/tools/v3_deployment/v3_deployment_config.csv)\
@@ -64,12 +64,12 @@ Optional parameters are:\
 
 An example on how to execute the tool could be next:
 ```bash
-$ ./tools/v3_deployment/v3_deployment.sh -c ./tools/v3_deployment/v3_deployment_config.csv -d localhost:root:user
+$ ./tools/v3_deployment/v3_deployment_config.sh -c ./tools/v3_deployment/v3_deployment_config.csv -d localhost:root:user
 ```
 
 An example on how to execute the tool in verbose mode could be next:
 ```bash
-$ ./tools/v3_deployment/v3_deployment.sh -c ./tools/v3_deployment/v3_deployment_config.csv -d localhost:root:user -v
+$ ./tools/v3_deployment/v3_deployment_config.sh -c ./tools/v3_deployment/v3_deployment_config.csv -d localhost:root:user -v
 ---------------------------------------------------------
 configuration_file:[./tools/v3_deployment/v3_deployment_config.csv]
 dbhost_user_password:[localhost:root:redhat123]
