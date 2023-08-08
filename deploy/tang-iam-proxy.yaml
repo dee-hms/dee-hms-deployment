@@ -1,0 +1,87 @@
+---
+apiVersion: v1
+kind: Template
+labels:
+  app: tang-iam-proxy
+  template: tang-iam-proxy
+metadata:
+  name: tang-iam-proxy
+  annotations:
+    description: Proxy to reach tang server deployment in console.redhat.com
+
+objects:
+  - apiVersion: cloud.redhat.com/v1alpha1
+    kind: ClowdApp
+    metadata:
+      name: tang-iam-proxy
+      labels:
+        app: tang-iam-proxy
+        service: tang-iam-proxy
+    spec:
+      envName: ${ENV_NAME}
+      featureFlags: false
+      deployments:
+        - name: deployment
+          replicas: 1
+          webServices:
+            public:
+              enabled: true
+              apiPath: tang-iam-proxy
+          podSpec:
+            image: ${IMG_NAME}-${IMG_VERSION}:${IMG_TAG}
+            command:
+              - /usr/bin/tang-iam-entrypoint.sh
+            env:
+              - name: PORT
+                value: ${ADV_INTERNAL_PORT}
+            livenessProbe:
+              exec:
+                command:
+                - /usr/bin/tang-iam-health-check.sh
+              initialDelaySeconds: 5
+              periodSeconds: 5
+              timeoutSeconds: 15
+            readinessProbe:
+              exec:
+                command:
+                - /usr/bin/tang-iam-health-check.sh
+              initialDelaySeconds: 27
+              periodSeconds: 10
+              timeoutSeconds: 5
+            volumes:
+              - persistentVolumeClaim:
+                  claimName: mysql-pvc
+                name: mysql-pvc
+            volumeMounts:
+              - mountPath: /var/lib/mysql
+                name: mysql-pvc
+
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: mysql-pvc
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+                
+
+# possible application ENV variables are in config/api.env.example
+parameters:
+  - description: ClowdEnv Name
+    name: ENV_NAME
+    value: "Tang IAM Proxy"
+  - description: "Image Version"
+    name: IMG_VERSION
+    value: "0.0.31"
+  - description: "Image Tag"
+    name: IMG_TAG
+    value: "latest"
+  - description: "Image Name"
+    name: IMG_NAME
+    value: quay.io/sec-eng-special/tang-iam-proxy-deehms
+  - description: Advertising internal port
+    name: ADV_INTERNAL_PORT
+    value: "8000"
