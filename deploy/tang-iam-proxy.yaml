@@ -37,14 +37,14 @@ objects:
             livenessProbe:
               exec:
                 command:
-                - /usr/bin/tang-iam-health-check.sh
+                  - /usr/bin/tang-iam-health-check.sh
               initialDelaySeconds: 5
               periodSeconds: 5
               timeoutSeconds: 15
             readinessProbe:
               exec:
                 command:
-                - /usr/bin/tang-iam-health-check.sh
+                  - /usr/bin/tang-iam-health-check.sh
               initialDelaySeconds: 27
               periodSeconds: 10
               timeoutSeconds: 5
