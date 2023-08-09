@@ -50,16 +50,16 @@ objects:
               timeoutSeconds: 5
             volumes:
               - persistentVolumeClaim:
-                  claimName: mysql-pvc
-                name: mysql-pvc
+                  claimName: sqlite-pvc
+                name: sqlite-pvc
             volumeMounts:
-              - mountPath: /var/lib/mysql
-                name: mysql-pvc
+              - mountPath: /var/lib/sqlite
+                name: sqlite-pvc
 
   - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
-      name: mysql-pvc
+      name: sqlite-pvc
     spec:
       accessModes:
         - ReadWriteOnce
@@ -75,7 +75,7 @@ parameters:
     value: "Tang IAM Proxy"
   - description: "Image Version"
     name: IMG_VERSION
-    value: "0.0.31"
+    value: "sqlite"
   - description: "Image Tag"
     name: IMG_TAG
     value: "latest"
