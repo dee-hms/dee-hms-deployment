@@ -7,7 +7,7 @@ labels:
 metadata:
   name: tang-iam-proxy
   annotations:
-    description: Proxy to reach tang server deployment in console.redhat.com
+    description: "Proxy to reach tang server deployment in console.redhat.com"
 
 objects:
   - apiVersion: cloud.redhat.com/v1alpha1
