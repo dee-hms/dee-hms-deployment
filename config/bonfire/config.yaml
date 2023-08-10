@@ -13,7 +13,14 @@
 apps:
 - name: tang
   components:
-    - name: service
+    - name: tang-service
       host: github
       repo: dee-hms/dee-hms-deployment
       path: deploy/clowdapp.yaml
+
+- name: tang-iam-proxy
+  components:
+    - name: tang-iam-proxy-service
+      host: github
+      repo: dee-hms/dee-hms-deployment
+      path: deploy/tang-iam-proxy.yaml
