@@ -16,7 +16,7 @@ apps:
     - name: tang-service
       host: github
       repo: dee-hms/dee-hms-deployment
-      path: deploy/clowdapp.yaml
+      path: deploy/tang-server.yaml
 
 - name: tang-iam-proxy
   components:

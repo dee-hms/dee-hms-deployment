@@ -13,15 +13,15 @@ objects:
   - apiVersion: cloud.redhat.com/v1alpha1
     kind: ClowdApp
     metadata:
-      name: tang-backend
+      name: tang-server
       labels:
-        app: tang-backend
-        service: tang
+        app: tang-server
+        service: tang-server
     spec:
       envName: ${ENV_NAME}
       featureFlags: false
       deployments:
-        - name: tang
+        - name: deployment
           replicas: 1
           webServices:
             public:
