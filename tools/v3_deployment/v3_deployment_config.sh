@@ -18,8 +18,11 @@ PKG_MGR="dnf"
 
 usage() {
     echo
-    echo "$1 -c <configFile> [-d database_file (/var/lib/sqlite/tang_bindings.db)] [-p tang_iam_proxy (will be guessed by default)] "
-    echo "        [-t tang_podname (will be guessed if not provided)] [-k k8s_client (oc by default)] [-h] [-v] "
+    echo "$1 -c <configFile>"
+    echo "        [-d database_file (/var/lib/sqlite/tang_bindings.db)]"
+    echo "        [-p tang_iam_proxy (will be guessed if not provided)]"
+    echo "        [-t tang_podname (will be guessed if not provided)]"
+    echo "        [-k k8s_client (oc by default)] [-h] [-v]"
     echo
     exit "$2"
 }
