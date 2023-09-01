@@ -12,6 +12,8 @@ Github
 grcov
 hms
 HMS
+IAM
+iam
 llvm
 localhost
 Markdown
@@ -24,5 +26,6 @@ redhat
 shellcheck
 socat
 spellcheck
+sqlite
 YAML
 yaml
